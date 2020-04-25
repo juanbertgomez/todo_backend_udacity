@@ -15,6 +15,7 @@ provider:
   environment:
     TODOS_TABLE: Todos-${self:provider.stage}
     INDEX_NAME: TodoIdIndex
+    AUTH_0_SECRET: UX66qoH0IFCB-clIbgGYGFbn2ZDqgTYLWTqSm4IMaslkh8x2df8XMeszZkKMuTYl
 
   iamRoleStatements:
     - Effect: Allow
@@ -34,9 +35,9 @@ functions:
     events:
       - http:
           method: get
-          authorizer: Auth
           path: todos
           cors: true
+          authorizer: Auth
 
   # # TODO: Configure this function
   # CreateTodo:
