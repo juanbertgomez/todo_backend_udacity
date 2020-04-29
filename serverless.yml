@@ -74,12 +74,19 @@ functions:
               'application/json': TodoRequest
 
   # # TODO: Configure this function
-  # UpdateTodo:
-  #   handler: src/lambda/http/updateTodo.handler
-  #   events:
-  #     - http:
-  #         method: patch
-  #         path: todos/{todoId}
+  UpdateTodo:
+    handler: src/lambda/http/updateTodo.handler
+    events:
+      - http:
+          method: patch
+          path: todos/{todoId}
+          authorizer: Auth
+          cors: true
+    iamRoleStatements:
+      - Effect: Allow
+      Action:
+      - dynamodb:UpdateItem
+      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
 
   # # TODO: Configure this function
   # DeleteTodo:
@@ -88,6 +95,13 @@ functions:
   #     - http:
   #         method: delete
   #         path: todos/{todoId}
+  #         authorizer: Auth
+  #         cors: true
+  #   iamRoleStatements:
+  #     - Effect: Allow
+  #     Action:
+  #       - dynamodb:DeleteItem
+  #     Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
 
   # TODO: Configure this function
   GenerateUploadUrl:
