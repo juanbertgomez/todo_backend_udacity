@@ -32,7 +32,7 @@ export async function getTodoById(id: string): Promise<AWS.DynamoDB.QueryOutput>
 
 export async function updateTodo(updatedTodo:TodoUpdate,todoId:string){
   await docClient.update({
-      TableName: this.todosTable,
+      TableName: todosTable,
       Key:{
           'todoId':todoId
       },
