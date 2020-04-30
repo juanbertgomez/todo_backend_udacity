@@ -19,8 +19,8 @@ provider:
   iamRoleStatements:
     - Effect: 'Allow' # xray permissions (required)
       Action:
-        - 'xray:PutTraceSegments'
-        - 'xray:PutTelemetryRecords'
+        - xray:PutTraceSegments
+        - xray:PutTelemetryRecords
       Resource:
         - '*'
 
