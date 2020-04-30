@@ -1,7 +1,7 @@
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import * as AWS  from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
-import TodoItem from '../models/TodoItem'
+import {TodoItem} from '../models/TodoItem'
 
 const XAWS = AWSXRay.captureAWS(AWS)
 
@@ -13,12 +13,12 @@ export class TodoAccess {
 
   ) {}
 
-  async getAllGroups(userId: string): Promise<TodoItem[]> {
+  async getTodos(userId: string): Promise<TodoItem[]> {
     // TODO: Get all TODO items for a current user
   
     const result = await this.docClient.query({
       TableName: this.todosTable,
-      IndexName: this.userIdIndex,
+      IndexName : this.userIdIndex,
       KeyConditionExpression: 'userId = :userId',
       ExpressionAttributeValues:{
           ':userId':userId
