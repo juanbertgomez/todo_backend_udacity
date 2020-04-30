@@ -16,14 +16,6 @@ provider:
     lambda: true
     apiGateway: true
   
-  iamRoleStatements:
-    - Effect: 'Allow' # xray permissions (required)
-      Action:
-        - xray:PutTraceSegments
-        - xray:PutTelemetryRecords
-      Resource:
-        - '*'
-
   environment:
     TODOS_TABLE: Todos-${self:provider.stage}
     USER_ID_INDEX: userId
@@ -59,6 +51,12 @@ functions:
         Action:
           - dynamodb:Query
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.USER_ID_INDEX}
+      - Effect: 'Allow' # xray permissions (required)
+        Action:
+          - xray:PutTraceSegments
+          - xray:PutTelemetryRecords
+        Resource:
+          - '*'
 
   # TODO: Configure this function
   CreateTodo:

@@ -16,14 +16,6 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   console.log('Processing event: ', event)
   let userId = getUserId(event)
   let todos = await dataLayer.getTodos(userId)
-  // const result = await docClient.query({
-  //   TableName: todosTable,
-  //   IndexName : userIdIndex,
-  //   KeyConditionExpression: 'userId = :userId',
-  //   ExpressionAttributeValues:{
-  //       ':userId':userId
-  //   }
-  // }).promise()
 
   return {
     statusCode: 200,

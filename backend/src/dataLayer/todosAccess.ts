@@ -3,18 +3,18 @@ import * as AWS  from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
 import {TodoItem} from '../models/TodoItem'
 
-const XAWS = AWSXRay.captureAWS(AWS)
+// const XAWS = AWSXRay.captureAWS(AWS)
 
 export class TodoAccess {
   constructor (
-    private readonly docClient: DocumentClient = createDynamoDBClient(),
-    private readonly todosTable = process.env.GROUPS_TABLE,
+    private readonly docClient: DocumentClient = new AWS.DynamoDB.DocumentClient(),
+    private readonly todosTable = process.env.TODOS_TABLE,
     private readonly userIdIndex = process.env.USER_ID_INDEX
 
   ) {}
-
   async getTodos(userId: string): Promise<TodoItem[]> {
     // TODO: Get all TODO items for a current user
+    console.log('userId',userId)
   
     const result = await this.docClient.query({
       TableName: this.todosTable,
@@ -25,19 +25,8 @@ export class TodoAccess {
       }
     }).promise()
 
+    console.log('resutl', result)
     const items = result.Items
     return items as TodoItem[]
   }
-}
-
-function createDynamoDBClient() {
-  if (process.env.IS_OFFLINE) {
-    console.log('Creating a local DynamoDB instance')
-    return new XAWS.DynamoDB.DocumentClient({
-      region: 'localhost',
-      endpoint: 'http://localhost:8000'
-    })
-  }
-
-  return new XAWS.DynamoDB.DocumentClient()
 }
