@@ -15,24 +15,23 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   // TODO: Get all TODO items for a current user
   console.log('Processing event: ', event)
   let userId = getUserId(event)
-  // dataLayer
-  const result = await docClient.query({
-    TableName: todosTable,
-    IndexName : userIdIndex,
-    KeyConditionExpression: 'userId = :userId',
-    ExpressionAttributeValues:{
-        ':userId':userId
-    }
-  }).promise()
+  let todos = await dataLayer.getTodos(userId)
+  // const result = await docClient.query({
+  //   TableName: todosTable,
+  //   IndexName : userIdIndex,
+  //   KeyConditionExpression: 'userId = :userId',
+  //   ExpressionAttributeValues:{
+  //       ':userId':userId
+  //   }
+  // }).promise()
 
-  const items = result.Items
   return {
     statusCode: 200,
     headers: {
       'Access-Control-Allow-Origin': '*'
     },
     body: JSON.stringify({
-      items
+      items: todos
     })
   }
 }
