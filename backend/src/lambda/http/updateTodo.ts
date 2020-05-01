@@ -1,16 +1,18 @@
 import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
-
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
+import {TodoAccess} from '../../dataLayer/todosAccess'
 
-import {getTodoById, updateTodo}from '../utils'
+let dataLayer = new TodoAccess()
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  console.log('Processing event: ', event)
+
   const todoId = event.pathParameters.todoId
   const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
 
-  const item = await getTodoById(todoId)
+  const item = await dataLayer.getTodoById(todoId)
 
   if (!Boolean(item)) {
     return {
@@ -24,8 +26,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     }
   }
 
-  await updateTodo(updatedTodo, todoId)
-  const updateItem = await getTodoById(todoId)
+  await dataLayer.updateTodo(updatedTodo, todoId)
+  const todo = await dataLayer.getTodoById(todoId)
 
   // TODO: Update a TODO item with the provided id using values in the "updatedTodo" object
   return {
@@ -34,7 +36,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       'Access-Control-Allow-Origin': '*'
     },
     body: JSON.stringify({
-      item: updateItem.Items[0],
+      item: todo,
     })
   }
 }

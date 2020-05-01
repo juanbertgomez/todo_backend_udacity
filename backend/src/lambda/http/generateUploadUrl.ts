@@ -2,12 +2,13 @@ import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 import * as AWS from 'aws-sdk'
-import {getTodoById} from '../utils'
-
+import {TodoAccess} from '../../dataLayer/todosAccess'
 
 const s3 = new AWS.S3({
   signatureVersion: 'v4'
 })
+
+let dataLayer = new TodoAccess()
 
 const bucketName = process.env.ATTACHEMENTS_S3_BUCKET
 const urlExpiration = process.env.SIGNED_URL_EXPIRATION
@@ -15,9 +16,9 @@ const urlExpiration = process.env.SIGNED_URL_EXPIRATION
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   console.log('Caller event ', event)
   const todoId = event.pathParameters.todoId
-  const item = await getTodoById(todoId)
+  const todo = await dataLayer.getTodoById(todoId)
 
-  if (!Boolean(item)) {
+  if (!Boolean(todo)) {
     return {
       statusCode: 404,
       headers: {
@@ -36,7 +37,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       'Access-Control-Allow-Origin': '*'
     },
     body: JSON.stringify({
-      item: item.Items[0],
+      item: todo,
       uploadUrl: url
     })
   }

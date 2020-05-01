@@ -1,38 +1,18 @@
 import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
-
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
-import * as uuid from 'uuid'
-import * as AWS from 'aws-sdk'
 import { getUserId } from '../utils'
+import {TodoAccess} from '../../dataLayer/todosAccess'
 
-const docClient = new AWS.DynamoDB.DocumentClient()
-const todosTable = process.env.TODOS_TABLE
-const bucketName = process.env.ATTACHEMENTS_S3_BUCKET
+let dataLayer = new TodoAccess()
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const newTodo: CreateTodoRequest = JSON.parse(event.body)
-  const itemId = uuid.v4()
 
   let userId = getUserId(event)
-  let createdAt = new Date()
-  let done = false
-  let attachmentUrl = `https://${bucketName}.s3.amazonaws.com/${itemId}`
 
-  const newItem = {
-    todoId: itemId, 
-    userId,
-    createdAt,
-    done,
-    attachmentUrl,
-    ...newTodo
-  }
-
-  await docClient.put({
-    TableName: todosTable,
-    Item: newItem
-  }).promise()
+  let newItem = await dataLayer.createTodo(userId, newTodo)
 
   // TODO: Implement creating a new TODO item
   return {

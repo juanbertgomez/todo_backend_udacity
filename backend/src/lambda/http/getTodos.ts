@@ -1,13 +1,8 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 import 'source-map-support/register'
-import * as AWS from 'aws-sdk'
 import { getUserId } from '../utils'
-
 import {TodoAccess} from '../../dataLayer/todosAccess'
 
-const docClient = new AWS.DynamoDB.DocumentClient()
-const todosTable = process.env.TODOS_TABLE
-const userIdIndex = process.env.USER_ID_INDEX
 
 let dataLayer = new TodoAccess()
 
